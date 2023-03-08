@@ -1,16 +1,18 @@
 from bitarray import bitarray
-import math
-
 
 class BloomFilterSet(AbstractSet):
-    
     def __init__(self, word_num=0):
         # ADD YOUR CODE HERE
         # initialize an empty bitarray
-        bit_num = int(-word_num*math.log(0.001) / (math.log(2)**2))
-        self.num_hashes = int(bit_num / word_num * math.log(2))
+        bit_num = int(-word_num*(self.ln(0.001)) / (self.ln(2)**2))
+        self.num_hashes = int(bit_num / word_num * self.ln(2))
         self.bitfield = bitarray(bit_num)
-        self.bitfield.setall(0)     
+        self.bitfield.setall(0)
+    
+    @staticmethod
+    def ln(x):
+        n = 1000.0
+        return n * ((x ** (1/n)) - 1)
     
     def get_index(self, key):
         return hash(key) % len(self.bitfield)
