@@ -1,0 +1,173 @@
+    
+# DO NOT MODIFY THIS CELL
+
+from abc import ABC, abstractmethod  
+
+# abstract class to represent a set and its insert/search operations
+class AbstractSet(ABC):
+    
+    # constructor
+    @abstractmethod
+    def __init__(self):
+        pass           
+        
+    # inserts "element" in the set
+    # returns "True" after successful insertion, "False" if the element is already in the set
+    # element : str
+    # inserted : bool
+    @abstractmethod
+    def insertElement(self, element):     
+        inserted = False
+        return inserted   
+    
+    # checks whether "element" is in the set
+    # returns "True" if it is, "False" otherwise
+    # element : str
+    # found : bool
+    @abstractmethod
+    def searchElement(self, element):
+        found = False
+        return found    
+    
+    
+# abstract class to represent a synthetic data generator
+class AbstractTestDataGenerator(ABC):
+    
+    # constructor
+    @abstractmethod
+    def __init__(self):
+        pass           
+        
+    # creates and returns a list of length "size" of strings
+    # size : int
+    # data : list<str>
+    @abstractmethod
+    def generateData(self, size):     
+        data = [""]*size
+        return data 
+
+def partition(array, low, high):
+    pivot = array[high]
+    i = low - 1
+    for j in range(low, high):
+        if array[j] <= pivot:
+            i += 1
+            (array[i], array[j]) = (array[j], array[i])
+    (array[i+1], array[high]) = (array[high], array[i+1])
+    return i+1
+
+def quick_sort(array,low,high):
+ 
+    #  auxiliary stack
+    size = high - low + 1
+    stack = [0] * (size)
+ 
+    top = -1
+ 
+    top = top + 1
+    stack[top] = low
+    top = top + 1
+    stack[top] = high
+ 
+    # Keep popping from stack while is not empty
+    while top >= 0:
+ 
+        # Pop high and low
+        high = stack[top]
+        top = top - 1
+        low = stack[top]
+        top = top - 1
+ 
+        # sorted array
+        p = partition(array, low, high)
+
+        # push left side to stack
+        if p-1 > low:
+            top = top + 1
+            stack[top] = low
+            top = top + 1
+            stack[top] = p - 1
+
+        #  push right side to stack
+        if p+1 < high:
+            top = top + 1
+            stack[top] = p + 1
+            top = top + 1
+            stack[top] = high    
+        
+def linear_search(array, item):
+    found = False
+    for element in array:
+        if element == item:
+            found = True
+    return found
+
+
+def to_read():
+    file = open(input("enter the file name: "), "r")
+    array = []
+    for line in file:
+        for word in line.split():
+            array.append(word)
+    return array
+
+class SequentialSearchSet(AbstractSet):
+    
+    def __init__(self):
+        # ADD YOUR CODE HERE
+        self.array = to_read()
+        quick_sort(self.array,0, len(self.array)-1)
+        pass           
+     
+    
+        
+    def insertElement(self, element):
+        inserted = False
+        # ADD YOUR CODE HERE
+        if element not in self.array:
+            self.array.append(element)
+            quick_sort(self.array,0, len(self.array)-1)
+            inserted = True
+        return inserted
+    
+    
+
+    def searchElement(self, element):     
+        found = False
+        # ADD YOUR CODE HERE
+        found = linear_search(self.array, element)
+        return found  
+
+
+
+elements1 = SequentialSearchSet() # the file is /Users/sid/Desktop/Algorithms/testfiles/test1-mobydick.txt
+elements2 = SequentialSearchSet() # the file is /Users/sid/Desktop/Algorithms/testfiles/test2-warpeace.txt
+elements3 = SequentialSearchSet() # the file is /Users/sid/Desktop/Algorithms/testfiles/test3-dickens.txt
+
+
+
+def linear_search(array, item):
+    found = False
+    for element in array:
+        if element == item:
+            found = True
+            break
+    return found
+
+
+runtime1 = timeit.timeit(lambda: linear_search(elements1.array, elements1.array[0]), number = 10)
+print("FILE 1. number of elements: ", len(elements1.array) , "   time taken: ", runtime1)
+
+runtime2 = timeit.timeit(lambda: linear_search(elements2.array, elements2.array[0]), number = 10)
+print("FILE 2. number of elements: ", len(elements2.array) , "   time taken: ", runtime2)
+
+runtime3 = timeit.timeit(lambda: linear_search(elements3.array, elements3.array[0]), number = 10)
+print("FILE 3. number of elements: ", len(elements3.array) , "   time taken: ", runtime3)
+
+num_elements = [len(elements1.array), len(elements2.array), len(elements3.array)]
+time = [runtime1, runtime2, runtime3]
+
+plt.title("time for 1st element in files")
+plt.xlabel("num_elements")
+plt.ylabel("time")
+plt.plot(num_elements, time)
