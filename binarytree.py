@@ -7,39 +7,36 @@ class BinarySearchTreeSet(AbstractSet):
         
     def insertElement(self, element):
         inserted = False
-        
         if self.key is None:
             self.key = element
             inserted = True
         elif element < self.key:
             if self.left is None:
-                inserted = BinarySearchTreeSet(element)
-            else:
-                self.left = self.left.insertElement(element)
+                self.left = BinarySearchTreeSet(element)
                 inserted = True
+            else:
+                inserted = self.left.insertElement(element)
         elif element > self.key:
             if self.right is None:
-                inserted = BinarySearchTreeSet(element)
-            else:
-                self.right = self.right.insertElement(element)
+                self.right = BinarySearchTreeSet(element)
                 inserted = True
-            
+            else:
+                inserted = self.right.insertElement(element)
+        else:
+            inserted = False 
         return inserted
-            
+    
+    
     
     def searchElement(self, element):     
         found = False
-        if self.key is not None:
-            if self.key == element:
+        node = self
+        while node is not None:
+            if element == node.key:
                 found = True
-            if element < self.key:
-                if self.left:
-                    found = self.left.searchElement(element)
-                else:
-                    found = False
-            if element > self.key:
-                if self.right:
-                    found = self.right.searchElement(element)
-                else:
-                    found = False  
+                break
+            elif element < node.key:
+                node = node.left
+            else:
+                node = node.right
         return found
